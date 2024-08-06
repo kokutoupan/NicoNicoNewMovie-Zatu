@@ -1,0 +1,31 @@
+{
+    "manifest_version": 3,
+    "name": "ニコニコ動画のフォロー新着を取得する",
+    "version": "1.0",
+    "description": "ニコニコ動画のフォロー新着を取得する拡張機能です",
+    "action": {
+        "default_popup": "src/popup.html",
+        "default_icon": "icon.png"
+    },
+    "background": {
+        "service_worker": "dist/background.js"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://www.nicovideo.jp/*",
+        "https://nvapi.nicovideo.jp/*"
+
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.nicovideo.jp/*"
+            ],
+            "js": [
+                "dist/content.js"
+            ]
+        }
+    ]
+}
