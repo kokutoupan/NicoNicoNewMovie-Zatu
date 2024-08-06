@@ -16,6 +16,9 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
     chrome.storage.local.remove('outputHTML', function() {
         console.log('outputHTML has been removed');
     });
+    while (outputDiv.firstChild) {
+        outputDiv.removeChild(outputDiv.firstChild); // 最初の子要素を削除
+    }
     console.log('Button clicked!');
     try {
         // フォローしているユーザーの情報を取得
