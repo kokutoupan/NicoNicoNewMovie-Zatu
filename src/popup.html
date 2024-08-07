@@ -25,23 +25,44 @@
             margin-bottom: 5px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 10px;
+            padding-bottom: 10px;
+            width: 100%;
+            /* bodyの幅いっぱいに広げる */
+            box-sizing: border-box;
+            /* パディングとボーダーを含める */
         }
+
         .video-title {
             font-size: 20px;
             margin-bottom: 10px;
         }
+
         .video-content {
             display: flex;
-            align-items: flex-start;
+            /* align-items: flex-start;
+             */
+            align-items: center;
+            width: 100%;
         }
+
         .video-thumbnail {
-            width: 300px; /* サムネイルの幅を調整 */
-            height: auto;
+            flex: 0 0 150px;
+            /* サムネイルの幅を調整（300pxから350pxに変更） */
+
             margin-right: 10px;
         }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .video-details {
+            flex: 1;
             max-width: 600px;
         }
+
         .video-details p {
             margin: 5px 0;
         }
