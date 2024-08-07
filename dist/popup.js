@@ -16,12 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.local.get(['outputHTML'], (result) => {
         if (result.outputHTML) {
             outputDiv.innerHTML = result.outputHTML;
+            const myButton = document.getElementById('myButton');
+            if (myButton !== null) {
+                myButton.innerText = "リロード";
+            }
         }
     });
 });
 (_a = document.getElementById('myButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
     // alert('Button clicked!');
     // chrome.runtime.sendMessage({ action: 'openPopup' });
+    const myButton = document.getElementById('myButton');
+    if (myButton !== null) {
+        myButton.innerText = "読み込み中...";
+        myButton.disabled = true;
+    }
     chrome.storage.local.remove('outputHTML', function () {
         console.log('outputHTML has been removed');
     });
@@ -64,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < 100; i++) {
             const movieId = MovieIdList[i].id;
             const movieUserName = MovieIdList[i].owner.name;
+            const movieUserId = MovieIdList[i].owner.id;
             const movieTitle = MovieIdList[i].title;
             const movieRegisteredAt = MovieIdList[i].registeredAt;
             const movieThumbnailUrl = MovieIdList[i].thumbnail.url;
@@ -81,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <img src="${movieThumbnailUrl}" alt="${movieTitle}">
                     </a>
                     <div class="video-details">
-                        <p><strong>投稿者:</strong> ${movieUserName}</p>
+                        <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
                         <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
                         <p><strong>再生数:</strong> ${movieViewCounter}</p>
                         <p><strong>コメント数:</strong> ${movieCommentCounter}</p>
@@ -102,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Fetch error: ', error);
     }
     chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
+    myButton.disabled = false;
     // console.log('Button clicked! end');
 }));
 function getMovieIdList(userID) {

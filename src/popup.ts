@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.local.get(['outputHTML'], (result) => {
       if (result.outputHTML) {
         outputDiv.innerHTML = result.outputHTML;
+        const myButton = document.getElementById('myButton');
+        if( myButton!== null) {
+            myButton.innerText = "リロード";
+        }
       }
     });
 });
@@ -13,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
 document.getElementById('myButton')?.addEventListener('click', async () => {
     // alert('Button clicked!');
     // chrome.runtime.sendMessage({ action: 'openPopup' });
+    const myButton = document.getElementById('myButton') as HTMLButtonElement;
+    if( myButton!== null) {
+        myButton.innerText = "読み込み中...";
+        myButton.disabled = true;
+    }
     chrome.storage.local.remove('outputHTML', function() {
         console.log('outputHTML has been removed');
     });
@@ -63,6 +72,7 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
         for (let i = 0; i < 100; i++) {
             const movieId = MovieIdList[i].id;
             const movieUserName = MovieIdList[i].owner.name;
+            const movieUserId = MovieIdList[i].owner.id;
             const movieTitle = MovieIdList[i].title;
             const movieRegisteredAt = MovieIdList[i].registeredAt;
             const movieThumbnailUrl = MovieIdList[i].thumbnail.url;
@@ -81,7 +91,7 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
                         <img src="${movieThumbnailUrl}" alt="${movieTitle}">
                     </a>
                     <div class="video-details">
-                        <p><strong>投稿者:</strong> ${movieUserName}</p>
+                        <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
                         <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
                         <p><strong>再生数:</strong> ${movieViewCounter}</p>
                         <p><strong>コメント数:</strong> ${movieCommentCounter}</p>
@@ -103,6 +113,7 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
     }
 
     chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
+    myButton.disabled = false;
     // console.log('Button clicked! end');
 });
 
