@@ -9,3 +9,6 @@
  1. ダウンロードする
  2. google chromeのパッケージ化されていない拡張機能として読み込む
  3. ニコニコ動画でこの拡張機能を選択する
+
+##　素材等
+ icon: [ニコニコテレビちゃん【ver.2.0】](https://commons.nicovideo.jp/works/nc177467)
