@@ -32,35 +32,12 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
     }
     console.log('Button clicked!');
     try {
-        // フォローしているユーザーの情報を取得
-        const url = 'https://nvapi.nicovideo.jp/v1/users/me/following/users?pageSize=';
-
-        const headers = {
-            'x-frontend-id': '6',
-            'x-frontend-version': '0',
-            'Content-Type': 'application/json' // 非標準のコンテンツタイプ
-        };
-
-        let response = await fetch(url + "1", {
-            method: 'GET', // GETメソッドを使用
-            headers: headers,
-            credentials: 'include' // クッキーを送信
-        }).then(response => response.json());
-
-        // console.log(response.data);
-        const followeesCount: number = response.data.summary.followees;
-
-        response = await fetch(url + String(followeesCount), {
-            method: 'GET', // GETメソッドを使用
-            headers: headers,
-            credentials: 'include' // クッキーを送信
-        }).then(response => response.json())
-
-        const items = response.data.items;
+        
+        const items = await getUserList();
         // console.log(response);
 
         //　動画IDのリストを取得
-        const MovieIdList = await processItems(items)
+        const MovieIdList = await processItems(items);
         // registeredAtでソートする関数
         MovieIdList.sort((a, b) => {
             const dateA = new Date(a.registeredAt);
@@ -71,7 +48,7 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
         });
         console.log(MovieIdList);
 
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 100 || i < MovieIdList.length; i++) {
             const movieId = MovieIdList[i].id;
             const movieUserName = MovieIdList[i].owner.name;
             const movieUserId = MovieIdList[i].owner.id;
@@ -120,6 +97,32 @@ document.getElementById('myButton')?.addEventListener('click', async () => {
     // console.log('Button clicked! end');
 });
 
+async function getUserList(): Promise<Array<any>> {
+    // フォローしているユーザーの情報を取得
+    const url = 'https://nvapi.nicovideo.jp/v1/users/me/following/users?pageSize=';
+
+    const headers = {
+        'x-frontend-id': '6',
+        'x-frontend-version': '0',
+        'Content-Type': 'application/json' // 非標準のコンテンツタイプ
+    };
+
+    let response = await fetch(url + "1", {
+        method: 'GET', // GETメソッドを使用
+        headers: headers,
+        credentials: 'include' // クッキーを送信
+    }).then(response => response.json());
+
+    // console.log(response.data);
+    const followeesCount: number = response.data.summary.followees;
+
+    response = await fetch(url + String(followeesCount), {
+        method: 'GET', // GETメソッドを使用
+        headers: headers,
+        credentials: 'include' // クッキーを送信
+    }).then(response => response.json())
+    return response.data.items;
+}
 
 async function getMovieIdList(userID: String): Promise<Array<any>> {
     const url = `https://nvapi.nicovideo.jp/v3/users/${userID}/videos?sortKey=registeredAt&sortOrder=desc&sensitiveContents=mask&pageSize=10&page=1`;
@@ -146,7 +149,7 @@ async function getMovieIdList(userID: String): Promise<Array<any>> {
     return MovieIdList;
 }
 
-async function processItems(items: any[]) {
+async function processItems(items: Array<any>) {
     // itemsの各要素に対して非同期処理を行い、その結果をPromiseとして取得
     const promises = items.map(async (elem: any) => {
         console.log(elem.id);
