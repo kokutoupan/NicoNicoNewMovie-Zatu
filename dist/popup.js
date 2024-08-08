@@ -169,6 +169,7 @@ function addMovieListToDiv(MovieIdList) {
         const movieId = MovieIdList[i].content.id;
         const movieUserName = MovieIdList[i].actor.name;
         const movieUserId = MovieIdList[i].actor.id;
+        const movieUserIconUrl = MovieIdList[i].actor.iconUrl;
         const movieTitle = MovieIdList[i].content.title;
         const movieRegisteredAt = MovieIdList[i].content.startedAt;
         const movieThumbnailUrl = MovieIdList[i].thumbnailUrl;
@@ -186,9 +187,9 @@ function addMovieListToDiv(MovieIdList) {
                     <img class="lazy" data-src="${movieThumbnailUrl}" alt="${movieTitle}">
                 </a>
                 <div class="video-details">
-                    <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
+                    <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><div class="actor"><img class="lazy" data-src="${movieUserIconUrl}" alt="${movieUserName}"><p> ${movieUserName}</p></div></a>
                     <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
-                    <p><strong>長さ:</strong> ${movieLength}</p>
+                    <p><strong>長さ:</strong> ${Math.floor(movieLength / 60)}分${movieLength % 60}秒</p>
                 </div>
             </div>
         </div>
