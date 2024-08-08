@@ -8,9 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
 let outputDiv;
+let countMovieIndex = 0;
+let nextCursor = '';
 document.addEventListener('DOMContentLoaded', () => {
+    var _a, _b;
     outputDiv = document.getElementById('video-list');
     // 状態を復元する
     chrome.storage.local.get(['outputHTML'], (result) => {
@@ -21,83 +23,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 myButton.innerText = "リロード";
             }
             lazyLoadImage();
+            const moreButton = document.getElementById('moreButton');
+            moreButton.hidden = false;
         }
     });
-});
-(_a = document.getElementById('myButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-    // alert('Button clicked!');
-    // chrome.runtime.sendMessage({ action: 'openPopup' });
-    const myButton = document.getElementById('myButton');
-    if (myButton !== null) {
-        myButton.innerText = "読み込み中...";
-        myButton.disabled = true;
-    }
-    chrome.storage.local.remove('outputHTML', function () {
-        console.log('outputHTML has been removed');
-    });
-    while (outputDiv.firstChild) {
-        outputDiv.removeChild(outputDiv.firstChild); // 最初の子要素を削除
-    }
-    console.log('Button clicked!');
-    try {
-        const items = yield getUserList();
-        // console.log(response);
-        //　動画IDのリストを取得
-        const MovieIdList = yield processItems(items);
-        // registeredAtでソートする関数
-        MovieIdList.sort((a, b) => {
-            const dateA = new Date(a.registeredAt);
-            const dateB = new Date(b.registeredAt);
-            // return dateA.getTime() - dateB.getTime(); // 昇順
-            return dateB.getTime() - dateA.getTime(); // 降順
+    // console.log(document.getElementById('moreButton'));
+    (_a = document.getElementById('moreButton')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        countMovieIndex += 1;
+        console.log('More Button clicked!' + countMovieIndex);
+        const moreButton = document.getElementById('moreButton');
+        if (moreButton !== null) {
+            moreButton.innerText = "読み込み中...";
+            moreButton.disabled = true;
+        }
+        try {
+            const MovieIdList = yield getNewMovieList();
+            addMovieListToDiv(MovieIdList);
+        }
+        catch (error) {
+            console.error('Fetch error: ', error);
+        }
+        moreButton.innerText = "もっと読み込む";
+        lazyLoadImage();
+        chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
+        moreButton.disabled = false;
+    }));
+    (_b = document.getElementById('myButton')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        // alert('Button clicked!');
+        // chrome.runtime.sendMessage({ action: 'openPopup' });
+        const myButton = document.getElementById('myButton');
+        if (myButton !== null) {
+            myButton.innerText = "読み込み中...";
+            myButton.disabled = true;
+        }
+        // outputHTMLを削除
+        chrome.storage.local.remove('outputHTML', function () {
+            console.log('outputHTML has been removed');
         });
-        console.log(MovieIdList);
-        for (let i = 0; i < 100 || i < MovieIdList.length; i++) {
-            const movieId = MovieIdList[i].id;
-            const movieUserName = MovieIdList[i].owner.name;
-            const movieUserId = MovieIdList[i].owner.id;
-            const movieTitle = MovieIdList[i].title;
-            const movieRegisteredAt = MovieIdList[i].registeredAt;
-            const movieThumbnailUrl = MovieIdList[i].thumbnail.url;
-            const movieViewCounter = MovieIdList[i].count.view;
-            const movieCommentCounter = MovieIdList[i].count.comment;
-            const movieMylistCounter = MovieIdList[i].count.mylist;
-            const movieLength = MovieIdList[i].duration;
-            const movieDescription = MovieIdList[i].shortDescription;
-            const movieElement = document.createElement('div');
-            movieElement.innerHTML = `
-            <div class="video-container">
-                <h2 class="video-title"><a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank">${movieTitle}</a></h2>
-                <div class="video-content">
-                    <a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank" class="video-thumbnail">
-                        <img class="lazy" data-src="${movieThumbnailUrl}" alt="${movieTitle}">
-                    </a>
-                    <div class="video-details">
-                        <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
-                        <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
-                        <p><strong>再生数:</strong> ${movieViewCounter}</p>
-                        <p><strong>コメント数:</strong> ${movieCommentCounter}</p>
-                        <p><strong>マイリスト数:</strong> ${movieMylistCounter}</p>
-                        <p><strong>長さ:</strong> ${movieLength}</p>
-                        <p>${movieDescription}</p>
-                    </div>
-                </div>
-            </div>
-        `;
-            movieElement.className = 'video-container';
-            // movieElement.innerText = movieTitle;
-            outputDiv.appendChild(movieElement);
+        while (outputDiv.firstChild) {
+            outputDiv.removeChild(outputDiv.firstChild); // 最初の子要素を削除
         }
-        document.getElementById('myButton').innerText = "リロード";
-    }
-    catch (error) {
-        console.error('Fetch error: ', error);
-    }
-    lazyLoadImage();
-    chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
-    myButton.disabled = false;
-    // console.log('Button clicked! end');
-}));
+        countMovieIndex = 0;
+        nextCursor = '';
+        console.log('Button clicked!');
+        try {
+            // const items = await getUserList();
+            // console.log(response);
+            //　動画IDのリストを取得
+            const MovieIdList = yield getNewMovieList();
+            addMovieListToDiv(MovieIdList);
+            document.getElementById('myButton').innerText = "リロード";
+        }
+        catch (error) {
+            console.error('Fetch error: ', error);
+        }
+        lazyLoadImage();
+        chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
+        myButton.disabled = false;
+        const moreButton = document.getElementById('moreButton');
+        moreButton.hidden = false;
+        // console.log('Button clicked! end');
+    }));
+});
 function getUserList() {
     return __awaiter(this, void 0, void 0, function* () {
         // フォローしているユーザーの情報を取得
@@ -158,6 +145,58 @@ function processItems(items) {
         // 全ての結果を結合してMovieIdListに設定
         return results;
     });
+}
+function getNewMovieList() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const url = 'https://api.feed.nicovideo.jp/v1/activities/followings/video?cursor=' + nextCursor + '&context=my_timeline';
+        console.log(url);
+        const headers = {
+            'x-frontend-id': '6',
+            'x-frontend-version': '0',
+            'Content-Type': 'application/json' // 非標準のコンテンツタイプ
+        };
+        let response = yield fetch(url, {
+            method: 'GET', // GETメソッドを使用
+            headers: headers,
+            credentials: 'include' // クッキーを送信
+        }).then(response => response.json());
+        nextCursor = response.nextCursor;
+        return response.activities;
+    });
+}
+function addMovieListToDiv(MovieIdList) {
+    for (let i = 0; i < MovieIdList.length; i++) {
+        const movieId = MovieIdList[i].content.id;
+        const movieUserName = MovieIdList[i].actor.name;
+        const movieUserId = MovieIdList[i].actor.id;
+        const movieTitle = MovieIdList[i].content.title;
+        const movieRegisteredAt = MovieIdList[i].content.startedAt;
+        const movieThumbnailUrl = MovieIdList[i].thumbnailUrl;
+        // const movieViewCounter = MovieIdList[i].count.view;
+        // const movieCommentCounter = MovieIdList[i].count.comment;
+        // const movieMylistCounter = MovieIdList[i].count.mylist;
+        const movieLength = MovieIdList[i].content.video.duration;
+        // const movieDescription = MovieIdList[i].shortDescription;
+        const movieElement = document.createElement('div');
+        movieElement.innerHTML = `
+        <div class="video-container">
+            <h2 class="video-title"><a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank">${movieTitle}</a></h2>
+            <div class="video-content">
+                <a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank" class="video-thumbnail">
+                    <img class="lazy" data-src="${movieThumbnailUrl}" alt="${movieTitle}">
+                </a>
+                <div class="video-details">
+                    <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
+                    <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
+                    <p><strong>長さ:</strong> ${movieLength}</p>
+                </div>
+            </div>
+        </div>
+    `;
+        movieElement.className = 'video-container';
+        // movieElement.innerText = movieTitle;
+        outputDiv.appendChild(movieElement);
+    }
 }
 function lazyLoadImage() {
     const lazyImages = document.querySelectorAll('img.lazy');
