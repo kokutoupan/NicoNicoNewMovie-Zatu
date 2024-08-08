@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (myButton !== null) {
                 myButton.innerText = "リロード";
             }
+            lazyLoadImage();
         }
     });
 });
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 class="video-title"><a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank">${movieTitle}</a></h2>
                 <div class="video-content">
                     <a href="https://www.nicovideo.jp/watch/${movieId}" target="_blank" class="video-thumbnail">
-                        <img src="${movieThumbnailUrl}" alt="${movieTitle}">
+                        <img class="lazy" data-src="${movieThumbnailUrl}" alt="${movieTitle}">
                     </a>
                     <div class="video-details">
                         <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><p><strong>投稿者:</strong> ${movieUserName}</p></a>
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     catch (error) {
         console.error('Fetch error: ', error);
     }
+    lazyLoadImage();
     chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
     myButton.disabled = false;
     // console.log('Button clicked! end');
@@ -151,5 +153,46 @@ function processItems(items) {
         // 全ての結果を結合してMovieIdListに設定
         return results;
     });
+}
+function lazyLoadImage() {
+    const lazyImages = document.querySelectorAll('img.lazy');
+    if ("IntersectionObserver" in Window) {
+        const lazyImageObserver = new IntersectionObserver(function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    const lazyImage = entry.target;
+                    if (lazyImage.dataset.src === undefined) {
+                        return;
+                    }
+                    lazyImage.src = lazyImage.dataset.src;
+                    lazyImage.classList.remove("lazy");
+                    lazyImageObserver.unobserve(lazyImage);
+                }
+            });
+        });
+        lazyImages.forEach(function (lazyImage) {
+            lazyImageObserver.observe(lazyImage);
+        });
+    }
+    else {
+        // Fallback for browsers that don't support IntersectionObserver
+        let lazyLoad = function () {
+            lazyImages.forEach(function (img) {
+                if (img.getBoundingClientRect().top < window.innerHeight && img.getBoundingClientRect().bottom > 0 && img.dataset.src !== undefined) {
+                    img.src = img.dataset.src;
+                    img.classList.remove("lazy");
+                    chrome.storage.local.set({ outputHTML: outputDiv.innerHTML });
+                }
+            });
+            if (lazyImages.length == 0) {
+                document.removeEventListener("scroll", lazyLoad);
+                window.removeEventListener("resize", lazyLoad);
+                window.removeEventListener("orientationchange", lazyLoad);
+            }
+        };
+        document.addEventListener("scroll", lazyLoad);
+        window.addEventListener("resize", lazyLoad);
+        window.addEventListener("orientationchange", lazyLoad);
+    }
 }
 console.log('Content script loaded');
