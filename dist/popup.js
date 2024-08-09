@@ -25,6 +25,18 @@ document.addEventListener('DOMContentLoaded', () => {
             lazyLoadImage();
             const moreButton = document.getElementById('moreButton');
             moreButton.hidden = false;
+            const links = outputDiv.querySelectorAll('a');
+            setAnchorTag(links);
+        }
+    });
+    chrome.storage.local.get(['countMovieIndex'], (result) => {
+        if (result.countMovieIndex) {
+            countMovieIndex = result.countMovieIndex;
+        }
+    });
+    chrome.storage.local.get(['nextCursor'], (result) => {
+        if (result.nextCursor) {
+            nextCursor = result.nextCursor;
         }
     });
     // console.log(document.getElementById('moreButton'));
@@ -39,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const MovieIdList = yield getNewMovieList();
             addMovieListToDiv(MovieIdList);
+            chrome.storage.local.set({ nextCursor: nextCursor });
+            chrome.storage.local.set({ countMovieIndex: countMovieIndex });
         }
         catch (error) {
             console.error('Fetch error: ', error);
@@ -72,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             //　動画IDのリストを取得
             const MovieIdList = yield getNewMovieList();
             addMovieListToDiv(MovieIdList);
+            chrome.storage.local.set({ nextCursor: nextCursor });
+            chrome.storage.local.set({ countMovieIndex: countMovieIndex });
             document.getElementById('myButton').innerText = "リロード";
         }
         catch (error) {
@@ -85,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // console.log('Button clicked! end');
     }));
 });
+// ユーザーのフォローしているユーザーの情報を取得
 function getUserList() {
     return __awaiter(this, void 0, void 0, function* () {
         // フォローしているユーザーの情報を取得
@@ -195,6 +212,8 @@ function addMovieListToDiv(MovieIdList) {
         </div>
     `;
         movieElement.className = 'video-container';
+        const links = movieElement.querySelectorAll('a');
+        setAnchorTag(links);
         // movieElement.innerText = movieTitle;
         outputDiv.appendChild(movieElement);
     }
@@ -239,5 +258,28 @@ function lazyLoadImage() {
         window.addEventListener("resize", lazyLoad);
         window.addEventListener("orientationchange", lazyLoad);
     }
+}
+function setAnchorTag(links) {
+    links.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // デフォルトのリンクの動作を防止
+            const action = link.href;
+            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                if (tabs.length > 0 && tabs[0].id !== undefined) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: action }, function (response) {
+                        if (chrome.runtime.lastError) {
+                            console.error(chrome.runtime.lastError.message);
+                        }
+                        else {
+                            console.log(response.result);
+                        }
+                    });
+                }
+                else {
+                    console.error('No active tab found or tab ID is undefined.');
+                }
+            });
+        });
+    });
 }
 console.log('Content script loaded');
