@@ -16,6 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const moreButton = document.getElementById('moreButton') as HTMLButtonElement;
             moreButton.hidden = false;
 
+            const links = outputDiv.querySelectorAll('a');
+            setAnchorTag(links);
+
+        }
+    });
+    chrome.storage.local.get(['countMovieIndex'], (result) => {
+        if (result.countMovieIndex) {
+            countMovieIndex = result.countMovieIndex;
+        }
+    });
+    chrome.storage.local.get(['nextCursor'], (result) => {
+        if (result.nextCursor) {
+            nextCursor = result.nextCursor;
         }
     });
 
@@ -33,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const MovieIdList = await getNewMovieList();
             addMovieListToDiv(MovieIdList);
+            chrome.storage.local.set({ nextCursor: nextCursor });
+            chrome.storage.local.set({ countMovieIndex: countMovieIndex });
         } catch (error) {
             console.error('Fetch error: ', error);
         }
@@ -72,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
             //　動画IDのリストを取得
             const MovieIdList = await getNewMovieList();
             addMovieListToDiv(MovieIdList);
+            chrome.storage.local.set({ nextCursor: nextCursor });
+            chrome.storage.local.set({ countMovieIndex: countMovieIndex });
 
             document.getElementById('myButton')!.innerText = "リロード";
 
@@ -86,10 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
         moreButton.hidden = false;
         // console.log('Button clicked! end');
     });
+
 });
 
-
-
+// ユーザーのフォローしているユーザーの情報を取得
 async function getUserList(): Promise<Array<any>> {
     // フォローしているユーザーの情報を取得
     const url = 'https://nvapi.nicovideo.jp/v1/users/me/following/users?pageSize=';
@@ -116,6 +133,7 @@ async function getUserList(): Promise<Array<any>> {
     }).then(response => response.json())
     return response.data.items;
 }
+
 
 async function getMovieIdList(userID: String): Promise<Array<any>> {
     const url = `https://nvapi.nicovideo.jp/v3/users/${userID}/videos?sortKey=registeredAt&sortOrder=desc&sensitiveContents=mask&pageSize=10&page=1`;
@@ -159,8 +177,7 @@ async function processItems(items: Array<any>) {
 }
 
 async function getNewMovieList(): Promise<Array<any>> {
-
-    const url = 'https://api.feed.nicovideo.jp/v1/activities/followings/video?cursor='+nextCursor + '&context=my_timeline';
+    const url = 'https://api.feed.nicovideo.jp/v1/activities/followings/video?cursor=' + nextCursor + '&context=my_timeline';
     console.log(url);
 
     const headers = {
@@ -204,12 +221,15 @@ function addMovieListToDiv(MovieIdList: Array<any>) {
                 <div class="video-details">
                     <a href="https://www.nicovideo.jp/user/${movieUserId}" target="_blank"><div class="actor"><img class="lazy" data-src="${movieUserIconUrl}" alt="${movieUserName}"><p> ${movieUserName}</p></div></a>
                     <p><strong>登録日:</strong> ${movieRegisteredAt}</p>
-                    <p><strong>長さ:</strong> ${Math.floor(movieLength/60)}分${movieLength%60}秒</p>
+                    <p><strong>長さ:</strong> ${Math.floor(movieLength / 60)}分${movieLength % 60}秒</p>
                 </div>
             </div>
         </div>
     `;
         movieElement.className = 'video-container';
+
+        const links = movieElement.querySelectorAll('a');
+        setAnchorTag(links);
         // movieElement.innerText = movieTitle;
         outputDiv.appendChild(movieElement);
     }
@@ -258,5 +278,28 @@ function lazyLoadImage() {
         window.addEventListener("orientationchange", lazyLoad);
     }
 }
-console.log('Content script loaded');
 
+function setAnchorTag(links: NodeListOf<HTMLAnchorElement>) {
+    links.forEach(function (link) {
+
+        link.addEventListener('click', function (event) {
+            event.preventDefault();  // デフォルトのリンクの動作を防止
+
+            const action = link.href;
+            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                if (tabs.length > 0 && tabs[0].id !== undefined) {
+                    chrome.tabs.sendMessage(tabs[0].id, { action: action }, function (response) {
+                        if (chrome.runtime.lastError) {
+                            console.error(chrome.runtime.lastError.message);
+                        } else {
+                            console.log(response.result);
+                        }
+                    });
+                } else {
+                    console.error('No active tab found or tab ID is undefined.');
+                }
+            });
+        });
+    });
+}
+console.log('Content script loaded');

@@ -6,7 +6,9 @@
       "rootDir": "./src",
       "lib": ["es2019","DOM"],
       "strict": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      // "sourceMap": false,
+      // "removeComments": true
     },
     "include": ["src"]
 } 
