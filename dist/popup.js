@@ -81,8 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         nextCursor = '';
         console.log('Button clicked!');
         try {
-            // const items = await getUserList();
-            // console.log(response);
             //　動画IDのリストを取得
             const MovieIdList = yield getNewMovieList();
             addMovieListToDiv(MovieIdList);
@@ -101,68 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // console.log('Button clicked! end');
     }));
 });
-// ユーザーのフォローしているユーザーの情報を取得
-function getUserList() {
-    return __awaiter(this, void 0, void 0, function* () {
-        // フォローしているユーザーの情報を取得
-        const url = 'https://nvapi.nicovideo.jp/v1/users/me/following/users?pageSize=';
-        const headers = {
-            'x-frontend-id': '6',
-            'x-frontend-version': '0',
-            'Content-Type': 'application/json' // 非標準のコンテンツタイプ
-        };
-        let response = yield fetch(url + "1", {
-            method: 'GET', // GETメソッドを使用
-            headers: headers,
-            credentials: 'include' // クッキーを送信
-        }).then(response => response.json());
-        // console.log(response.data);
-        const followeesCount = response.data.summary.followees;
-        response = yield fetch(url + String(followeesCount), {
-            method: 'GET', // GETメソッドを使用
-            headers: headers,
-            credentials: 'include' // クッキーを送信
-        }).then(response => response.json());
-        return response.data.items;
-    });
-}
-function getMovieIdList(userID) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = `https://nvapi.nicovideo.jp/v3/users/${userID}/videos?sortKey=registeredAt&sortOrder=desc&sensitiveContents=mask&pageSize=10&page=1`;
-        const headers = {
-            'x-frontend-id': '6',
-            'x-frontend-version': '0',
-            'Content-Type': 'application/json' // 非標準のコンテンツタイプ
-        };
-        const res = yield fetch(url, {
-            method: 'GET', // GETメソッドを使用
-            headers: headers,
-            credentials: 'include' // クッキーを送信
-        })
-            .then(response => response.json())
-            .then(data => data.data.items);
-        const MovieIdList = new Array();
-        res.forEach((elem) => {
-            MovieIdList.push(elem.essential);
-        });
-        return MovieIdList;
-    });
-}
-function processItems(items) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // itemsの各要素に対して非同期処理を行い、その結果をPromiseとして取得
-        const promises = items.map((elem) => __awaiter(this, void 0, void 0, function* () {
-            console.log(elem.id);
-            // getMovieIdListの結果をMovieIdListに追加
-            return yield getMovieIdList(elem.id);
-        }));
-        // 全てのPromiseが解決するのを待つ
-        // 二次元配列をフラット化するために reduce を使用
-        const results = (yield Promise.all(promises)).reduce((acc, val) => acc.concat(val), []);
-        // 全ての結果を結合してMovieIdListに設定
-        return results;
-    });
-}
 function getNewMovieList() {
     return __awaiter(this, void 0, void 0, function* () {
         const url = 'https://api.feed.nicovideo.jp/v1/activities/followings/video?cursor=' + nextCursor + '&context=my_timeline';

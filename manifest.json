@@ -1,14 +1,11 @@
 {
     "manifest_version": 3,
     "name": "ニコニコ動画のフォロー新着を取得する",
-    "version": "2.1",
-    "description": "ニコニコ動画のフォロー新着を取得する拡張機能です",
+    "version": "2.1.2",
+    "description": "ニコニコ動画のフォロー新着を取得しポップアップで表示する拡張機能です",
     "action": {
         "default_popup": "popup.html",
         "default_icon": "icon.png"
-    },
-    "background": {
-        "service_worker": "dist/background.js"
     },
     "permissions": [
         "storage",
@@ -16,7 +13,6 @@
     ],
     "host_permissions": [
         "https://www.nicovideo.jp/*",
-        "https://nvapi.nicovideo.jp/*",
         "https://api.feed.nicovideo.jp/*"
     ]
 }
