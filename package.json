@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "// --- リリース用スクリプト ---": "",
+    "version": "node scripts/sync-version.js && git add manifest.json",
+    "postversion": "npm run release",
+    "build:zip": "mkdir -p release && bestzip release/${npm_package_name}-v$(node scripts/get-manifest-version.js).zip dist/*",
+    "release": "npm run build && npm run build:zip"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +22,8 @@
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.8",
     "@vitejs/plugin-react": "^5.0.2",
+    "bestzip": "^2.2.1",
+    "fs-extra": "^11.3.1",
     "typescript": "^5.5.4",
     "vite": "^7.1.3"
   },
