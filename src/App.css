@@ -7,8 +7,8 @@
   --text-color-secondary: #6c757d;
   --card-bg-color: #ffffff;
   --body-bg-color: #f8f9fa;
-  --border-color: #dee2e6;
-  --shadow-color: rgba(0, 0, 0, 0.075); /* 影の色を少し調整 */
+  --border-color: #e9ecef;
+  --spacing-unit: 5px;
 }
 
 body {
@@ -40,18 +40,16 @@ a {
   justify-content: center;
 }
 
-/* --- ボタンのスタイル（更新） --- */
 .button {
-  display: inline-flex; /* アイコンとテキストを中央揃えにするため */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-unit); /* アイコンとテキストの間隔 */
-  
-  border: 1px solid transparent; /* 枠線用のスペースを確保 */
-  padding: 12px 20px; /* サイズを大きくする */
+  gap: var(--spacing-unit);
+  border: 1px solid transparent;
+  padding: 12px 20px;
   border-radius: var(--spacing-unit);
-  font-size: 15px; /* フォントサイズを少し大きくする */
-  font-weight: 600; /* 少し太くする */
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
@@ -61,15 +59,14 @@ a {
   cursor: not-allowed;
 }
 
-/* プライマリーボタン（リロード） */
 .button-primary {
-  background-image: linear-gradient(to top, #007bff, #339aff); /* グラデーション */
+  background-image: linear-gradient(to top, #007bff, #339aff);
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15); /* 影を追加 */
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .button-primary:hover:not(:disabled) {
-  transform: translateY(-2px); /* 少し浮き上がるホバー効果 */
+  transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
 
@@ -78,7 +75,6 @@ a {
   box-shadow: 0 1px 2px rgba(0, 123, 255, 0.3);
 }
 
-/* セカンダリーボタン（もっと読み込む） */
 .button-secondary {
   background-color: transparent;
   color: var(--primary-color);
@@ -92,18 +88,19 @@ a {
 }
 
 .video-card {
-  background-color: var(--card-bg-color);
-  border-radius: calc(var(--spacing-unit) * 1.5);
+  background-image: linear-gradient(to top, #ffffff, #f9f9f9);
+  border-radius: 12px;
   margin-bottom: calc(var(--spacing-unit) * 2);
   padding: calc(var(--spacing-unit) * 2);
-  box-shadow: 0 2px 4px var(--shadow-color);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
 
 .video-card:hover {
-  box-shadow: 0 4px 12px var(--shadow-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07), 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .video-title {
@@ -133,7 +130,6 @@ a {
   height: auto;
   border-radius: var(--spacing-unit);
   display: block;
-  border: 1px solid var(--border-color);
 }
 
 .video-details {
