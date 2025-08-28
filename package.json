@@ -10,7 +10,7 @@
     "// --- リリース用スクリプト ---": "",
     "version": "node scripts/sync-version.js && git add manifest.json",
     "postversion": "npm run release",
-    "build:zip": "mkdir -p release && bestzip release/${npm_package_name}-v$(node scripts/get-manifest-version.js).zip dist/*",
+    "build:zip": "mkdir -p release && cd dist && bestzip ../release/${npm_package_name}-v$(node ../scripts/get-manifest-version.js).zip ./*",
     "release": "npm run build && npm run build:zip"
   },
   "keywords": [],
