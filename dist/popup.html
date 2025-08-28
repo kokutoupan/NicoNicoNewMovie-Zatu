@@ -4,88 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>My Chrome Extension</title>
-    <style>
-        body {
-
-            max-width: 465px;
-            min-width: 430px;
-
-
-            font-family: Arial,
-                sans-serif;
-            padding: 10px;
-        }
-
-        button {
-            display: block;
-            margin: 10px 0;
-        }
-
-        .video-container {
-            margin-bottom: 5px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            width: 100%;
-            /* bodyの幅いっぱいに広げる */
-            box-sizing: border-box;
-            /* パディングとボーダーを含める */
-        }
-
-        .video-title {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-
-        .video-content {
-            display: flex;
-            /* align-items: flex-start;
-             */
-            align-items: center;
-            width: 100%;
-        }
-
-        .video-thumbnail {
-            flex: 0 0 150px;
-            /* サムネイルの幅を調整（300pxから350pxに変更） */
-
-            margin-right: 8px;
-        }
-
-        .video-thumbnail img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .video-details {
-            flex: 1;
-            max-width: 600px;
-        }
-
-        .video-details img {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-
-        .video-details p {
-            margin: 5px 0;
-        }
-
-        .actor {
-            display: flex;
-            align-items: center; /* アイコンと名前を縦方向に中央揃え */
-        }
-    </style>
-  <script type="module" crossorigin src="/assets/popup.html-OxfG9VkU.js"></script>
+  <script type="module" crossorigin src="/assets/popup.html-5Lod4_iS.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/popup-B44y-Iyo.css">
 </head>
 
 <body>
-    <h1>フォロー新着(雑)</h1>
-    <button id="myButton">新着を表示</button>
-    <div id="video-list"></div>
-    <button id="moreButton" hidden>もっと見る</button>
+    <div id="root"></div>
 </body>
 
 </html>
