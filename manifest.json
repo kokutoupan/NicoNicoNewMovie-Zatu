@@ -8,8 +8,7 @@
         "default_icon": "icon.png"
     },
     "permissions": [
-        "storage",
-        "tab"
+        "storage"
     ],
     "host_permissions": [
         "https://www.nicovideo.jp/*",
@@ -18,7 +17,7 @@
     "content_scripts": [
         {
             "matches": ["https://www.nicovideo.jp/*"],
-            "js": ["./dist/content.js"]
+            "js": ["./src/content.ts"]
         }
     ]
 }
