@@ -32,17 +32,17 @@ const VideoItem: React.FC<VideoItemProps> = ({ movie }) => {
         return () => observer.disconnect();
     }, []);
 
-    // リンククリック時に新しいタブで開く
+    // リンククリック時にContent Scriptへページ遷移を依頼するメッセージを送信
     const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-        // ミドルクリックや修飾キー付きのクリックはブラウザのデフォルトの動作に任せる
+        // ミドルクリックや修飾キー付きのクリックはブラウザのデフォルトの動作（新しいタブで開く）に任せる
         if (event.ctrlKey || event.metaKey || event.button === 1) {
             return;
         }
 
         event.preventDefault(); // 通常のリンク遷移をキャンセル
         const href = event.currentTarget.href;
-        // chrome.tabs.create APIを使って新しいタブでリンクを開く
-        chrome.tabs.create({ url: href });
+        // Content Scriptにメッセージを送信してページを遷移させる
+        chrome.runtime.sendMessage({ type: 'navigate', url: href });
     };
 
     const {

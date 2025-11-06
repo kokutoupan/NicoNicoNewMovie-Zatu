@@ -85,4 +85,19 @@ if (!injectButton()) {
     });
 }
 
+// --- 5. iframeからのメッセージをリッスンし、ページ遷移を実行 ---
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // メッセージが 'navigate' 型で、URLが含まれていることを確認
+    if (message.type === 'navigate' && message.url) {
+        console.log(`Niconico Extension: Navigating to ${message.url}`);
+        // モーダルを閉じる
+        hideModal();
+        // 現在のタブのURLをメッセージ内のURLに変更
+        window.location.href = message.url;
+        // メッセージが処理されたことを示すためにtrueを返す
+        sendResponse({ status: 'ok' });
+    }
+    return true; // 非同期応答のためにtrueを返す
+});
+
 console.log('Niconico Extension: content.ts loaded.');
