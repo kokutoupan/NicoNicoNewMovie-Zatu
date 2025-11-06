@@ -32,17 +32,17 @@ const VideoItem: React.FC<VideoItemProps> = ({ movie }) => {
         return () => observer.disconnect();
     }, []);
 
-    // リンククリック時にContent Scriptへページ遷移を依頼するメッセージを送信
+    // リンククリック時に親ウィンドウへpostMessageで通知
     const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-        // ミドルクリックや修飾キー付きのクリックはブラウザのデフォルトの動作（新しいタブで開く）に任せる
+        // ミドルクリックや修飾キー付きのクリックはブラウザのデフォルトの動作に任せる
         if (event.ctrlKey || event.metaKey || event.button === 1) {
             return;
         }
 
         event.preventDefault(); // 通常のリンク遷移をキャンセル
         const href = event.currentTarget.href;
-        // Content Scriptにメッセージを送信してページを遷移させる
-        chrome.runtime.sendMessage({ type: 'navigate', url: href });
+        // 親ウィンドウ(Content Script)にメッセージを送信
+        window.parent.postMessage({ type: 'niconico-extension-navigate', url: href }, 'https://www.nicovideo.jp');
     };
 
     const {
