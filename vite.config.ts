@@ -11,4 +11,11 @@ export default defineConfig({
     // crxプラグインを呼び出し、manifestを渡す
     crx({ manifest }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        popup: 'popup.html',
+      },
+    },
+  },
 })
