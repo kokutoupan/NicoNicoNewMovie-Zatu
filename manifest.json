@@ -21,7 +21,7 @@
         {
             "resources": [
                 "popup.html",
-                "src/main.tsx"
+                "assets/*"
             ],
             "matches": [
                 "https://www.nicovideo.jp/*"
