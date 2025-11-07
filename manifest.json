@@ -1,31 +1,35 @@
 {
-    "manifest_version": 3,
-    "name": "ニコニコ動画のフォロー新着を取得する",
-    "version": "2.2.2",
-    "description": "ニコニコ動画のフォロー新着を取得しポップアップで表示する拡張機能です",
-    "permissions": [
-        "storage",
-        "tabs"
-    ],
-    "host_permissions": [
-        "https://www.nicovideo.jp/*",
-        "https://api.feed.nicovideo.jp/*"
-    ],
-    "content_scripts": [
-        {
-            "matches": ["https://www.nicovideo.jp/*"],
-            "js": ["src/content.ts"]
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "resources": [
-                "popup.html",
-                "assets/*"
-            ],
-            "matches": [
-                "https://www.nicovideo.jp/*"
-            ]
-        }
-    ]
+  "manifest_version": 3,
+  "name": "ニコニコ動画のフォロー新着を取得する",
+  "version": "2.3.0",
+  "description": "ニコニコ動画のフォロー新着を取得しポップアップで表示する拡張機能です",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://www.nicovideo.jp/*",
+    "https://api.feed.nicovideo.jp/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.nicovideo.jp/*"
+      ],
+      "js": [
+        "src/content.ts"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup.html",
+        "assets/*"
+      ],
+      "matches": [
+        "https://www.nicovideo.jp/*"
+      ]
+    }
+  ]
 }
