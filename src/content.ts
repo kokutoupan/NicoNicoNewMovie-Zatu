@@ -54,7 +54,7 @@ const injectButton = (): boolean => {
     if (headerContainer && !document.getElementById(BUTTON_ID)) {
         const extensionButton = document.createElement('button');
         extensionButton.id = BUTTON_ID;
-        extensionButton.innerText = '拡張機能';
+        extensionButton.innerText = 'フォロー新着';
         extensionButton.className = 'CommonHeader--primaryButton CommonHeader---user';
 
         extensionButton.addEventListener('click', (e) => {
@@ -62,7 +62,7 @@ const injectButton = (): boolean => {
             modal.classList.contains('visible') ? hideModal() : showModal();
         });
 
-        headerContainer.appendChild(extensionButton);
+        headerContainer.prepend(extensionButton);
         return true;
     }
     return false;

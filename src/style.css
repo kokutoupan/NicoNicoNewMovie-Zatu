@@ -59,3 +59,8 @@
 #niconico-extension-modal.visible {
     display: flex;
 }
+
+/* ヘッダーに追加されるボタンの文字色 */
+#niconico-extension-header-button {
+    color: white;
+}
