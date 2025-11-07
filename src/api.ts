@@ -37,8 +37,6 @@ export const getNewMovieList = async (cursor: string = ''): Promise<ApiResponse>
   if (!response.ok) {
     throw new Error('API fetch failed');
   }
-    
-  console.log('API response received');
 
   return response.json();
 };
