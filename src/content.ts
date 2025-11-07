@@ -44,6 +44,7 @@ overlay.addEventListener('click', hideModal);
 
 // --- 3. ヘッダーにボタンを挿入するロジック ---
 
+// BUG: ヘッダーのセレクターが非常に壊れやすい。サイトのアップデートで動かなくなる可能性が高い。
 const HEADER_SELECTOR = '#CommonHeader > div > div > div > div.common-header-wb7b82';
 const BUTTON_ID = 'niconico-extension-header-button';
 
@@ -51,8 +52,6 @@ const injectButton = (): boolean => {
     const headerContainer = document.querySelector(HEADER_SELECTOR);
 
     if (headerContainer && !document.getElementById(BUTTON_ID)) {
-        console.log('Niconico Extension: Header found. Injecting button.');
-
         const extensionButton = document.createElement('button');
         extensionButton.id = BUTTON_ID;
         extensionButton.innerText = '拡張機能';
@@ -72,10 +71,8 @@ const injectButton = (): boolean => {
 // --- 4. ページ読み込み時の初期チェックと MutationObserver の設定 ---
 
 if (!injectButton()) {
-    console.log('Niconico Extension: Header not found immediately. Starting MutationObserver.');
     const observer = new MutationObserver((mutations, obs) => {
         if (injectButton()) {
-            console.log('Niconico Extension: Button injected via MutationObserver. Stopping observer.');
             obs.disconnect();
         }
     });
@@ -97,10 +94,7 @@ window.addEventListener('message', (event) => {
 
     // メッセージの形式が正しいことを確認
     if (data.type === 'niconico-extension-navigate' && data.url) {
-        console.log(`Niconico Extension: Navigating to ${data.url}`);
         hideModal();
         window.location.href = data.url;
     }
 });
-
-console.log('Niconico Extension: content.ts loaded.');

@@ -53,26 +53,26 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const handleReload = async () => {
+  const handleReload = useCallback(async () => {
     setIsLoading(true);
     setMovies([]);
     setNextCursor('');
     await fetchMovies('');
     setIsLoading(false);
-  };
+  }, [fetchMovies]);
 
-  const handleLoadMore = async () => {
+  const handleLoadMore = useCallback(async () => {
     if (isMoreLoading || !nextCursor) return;
     setIsMoreLoading(true);
     await fetchMovies(nextCursor);
     setIsMoreLoading(false);
-  };
+  }, [isMoreLoading, nextCursor, fetchMovies]);
 
   useEffect(() => {
     if (isInitialized && movies.length === 0) {
       handleReload();
     }
-  }, [isInitialized]);
+  }, [isInitialized, movies.length, handleReload]);
 
 
   return (
